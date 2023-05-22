@@ -9,7 +9,7 @@ import '../styles/Navbar.css';
 function NavBarComponent() {
   return (
     <div className='navbar'>
-       <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
+       <Navbar collapseOnSelect expand="lg" bg="linear-gradient(to right, rgb(47, 102, 86), rgb(2, 69, 145));" variant="dark">
       <Container>
       <Navbar.Brand href="/">
             <img
