@@ -4,6 +4,7 @@ import '../styles/HomePage.css';
 import NavBarComponent from './NavBarComponent';
 import { Card, Form, Button} from 'react-bootstrap';
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
+import ReactPaginate from "react-paginate";
 import JobCategoryService from '../services/JobCategoryService';
 import JobTypeService from '../services/JobTypeService';
 import JobModalityService from '../services/JobModalityService';
@@ -19,6 +20,12 @@ function HomePage() {
     const [selectedModalities, setSelectedModalities] = useState([]);
     const [vacancies, setVacancies]=useState([]);
     const [expandedVacancyId, setExpandedVacancyId] = useState(null);
+
+    const [pageNumber, setPageNumber] = useState(0);
+
+    const jobsPerPage = 5;
+    const pagesVisited = pageNumber * jobsPerPage;
+    const pageCount = Math.ceil(vacancies.length / jobsPerPage);
     
 
     useEffect(() => {
@@ -100,6 +107,11 @@ const handleVacancyClick = (vacancyId) => {
   }
 };
 
+const changePage = ({ selected }) => {
+  setPageNumber(selected);
+};
+
+
   return (
     <div className='home'>
       <div>
@@ -168,7 +180,7 @@ const handleVacancyClick = (vacancyId) => {
             </div>
             <div className='col-9'>
               {
-                vacancies.map((vacancy)=>(
+                vacancies.slice(pagesVisited, pagesVisited + jobsPerPage).map((vacancy)=>(
                   <Card style={{ margin:'20px' , background:'rgba(255, 255, 255, 0.137)'}}>
                  <Card.Body>
 
@@ -227,9 +239,28 @@ const handleVacancyClick = (vacancyId) => {
                  </Card>
                 ))
               }
+              <div className='row'>
+      <div className='col' style={{ textAlign:'right' }}>
+        <div className='pagination'>
+      <ReactPaginate
+        previousLabel={"← Previous"}
+        nextLabel={"Next →"}
+        pageCount={ pageCount }
+        onPageChange={changePage}
+        containerClassName={"pagination"}
+        previousLinkClassName={"pagination__link"}
+        nextLinkClassName={"pagination__link"}
+        disabledClassName={"pagination__link--disabled"}
+        activeClassName={"pagination__link--active"}
+      />
+      </div>
+    </div>
+               
+                </div>
             </div>
         </div>
       </div>
+
     </div>
   )
 }
