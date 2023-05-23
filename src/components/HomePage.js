@@ -15,9 +15,13 @@ function HomePage() {
     const [typeList, setTypeList] = useState([]);
     const [modalityList, setModalityList] = useState([]);
     const [categoryList, setCategoryList] = useState([]);
-    const [categoryId,setCategoryId]=useState('');
+    const [categoryId,setCategoryId]=useState(null);
     const [selectedTypes, setSelectedTypes] = useState([]);
     const [selectedModalities, setSelectedModalities] = useState([]);
+    const [searchText,setSearchText]=useState('');
+    const [selectedTypeList,setSelectedTypeList]=useState([]);
+    const [selectedModalityList,setSelectedModalityList]=useState([]);
+    const [searchWordList,setSearchWordList]=useState([]);
     const [vacancies, setVacancies]=useState([]);
     const [expandedVacancyId, setExpandedVacancyId] = useState(null);
 
@@ -111,6 +115,29 @@ const changePage = ({ selected }) => {
   setPageNumber(selected);
 };
 
+const searchData=()=>{
+  setSelectedTypeList(selectedTypes.map((type) => ({ id: type })));
+  setSelectedModalityList(selectedModalities.map((modality) => ({ id: modality })));
+if(searchText.length>0){
+  const words = searchText.split(" ");
+
+  setSearchWordList(words.map((word) => ({
+    word: word.charAt(0).toUpperCase() + word.slice(1)
+  })));
+}
+const data={
+  "category_id":categoryId,
+  "type":selectedTypeList,
+  "modality":selectedModalityList,
+  "search_text":searchWordList
+}
+console.warn(data);
+VacancyService.searchBySelectedData(data).then(res=>{
+  console.warn(res.data);
+  setVacancies(res.data);
+})
+};
+
 
   return (
     <div className='home'>
@@ -120,10 +147,21 @@ const changePage = ({ selected }) => {
       <div >
         <div className='row'>
             <div className='col-3'>
-            <Card style={{ margin:'20px' , background:'rgba(255, 255, 255, 0.137)'}}>
+            <Card style={{ margin:'20px' ,marginRight:'5px', background:'rgba(255, 255, 255, 0.137)'}}>
                  <Card.Body>
                     <div className='row'>
-                      <div className='col'> <Button variant="primary">Search</Button></div>
+                      <div className='col'> <Button variant="primary" onClick={() => searchData()}>Search</Button></div>
+                    </div>
+                    <div className='row'>
+                      <div className='col'>
+                      <Form.Control
+                      placeholder='Enter Job Title'
+            className='input'
+            type="text"
+            value={searchText}
+            onChange={(event) => setSearchText(event.target.value)}
+          />
+                      </div>
                     </div>
                     <div className='row'>Job Categories</div>
                     <div className='row'>
@@ -134,7 +172,7 @@ const changePage = ({ selected }) => {
                         value={categoryId}
                         onChange={(event) => setCategoryId(event.target.value)}
                            >
-                        <option >
+                        <option value="0">
                             Select Category
                        </option>
       {categoryList.map((category) => (
@@ -181,7 +219,7 @@ const changePage = ({ selected }) => {
             <div className='col-9'>
               {
                 vacancies.slice(pagesVisited, pagesVisited + jobsPerPage).map((vacancy)=>(
-                  <Card style={{ margin:'20px' , background:'rgba(255, 255, 255, 0.137)'}}>
+                  <Card style={{ margin:'20px' ,marginLeft:'5px', background:'rgba(255, 255, 255, 0.137)'}}>
                  <Card.Body>
 
                   <div className='row'><div className='col' style={{ textAlign:'right' }}><Button variant="primary">Apply</Button></div></div>
@@ -240,7 +278,7 @@ const changePage = ({ selected }) => {
                 ))
               }
               <div className='row'>
-      <div className='col' style={{ textAlign:'right' }}>
+      <div className='col' style={{ textAlign:'center' }}>
         <div className='pagination'>
       <ReactPaginate
         previousLabel={"← Previous"}
