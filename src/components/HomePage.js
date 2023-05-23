@@ -133,11 +133,22 @@ const data={
 }
 console.warn(data);
 VacancyService.searchBySelectedData(data).then(res=>{
+  setPageNumber(0);
   console.warn(res.data);
   setVacancies(res.data);
+  
 })
 };
 
+//search vacancy by company
+const handleCompanyClick= (companyId) => {
+  VacancyService.searchByCompany(companyId).then(res=>{
+    setPageNumber(0);
+    console.warn(res.data);
+    setVacancies(res.data);
+    
+  })
+};
 
   return (
     <div className='home'>
@@ -238,7 +249,8 @@ VacancyService.searchBySelectedData(data).then(res=>{
                   className='row'
                  onClick={() => handleVacancyClick(vacancy.id)}
                  style={{ cursor: 'pointer' }}><h5>{vacancy.title}</h5></div>
-                      <div className='row'><h6>
+                      <div className='row' onClick={() => handleCompanyClick(vacancy.employer.id)}
+                 style={{ cursor: 'pointer' }}><h6>
                         {vacancy.employer.verification &&(
                         <VerifiedUserIcon/> )}{vacancy.employer.name}</h6></div>
                       <div className='row'><p>{vacancy.employer.address}</p></div>
